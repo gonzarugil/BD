@@ -6,6 +6,7 @@ Created on Tue Nov  3 14:08:51 2015
 """
 
 import matplotlib.pyplot as plt
+from sklearn import manifold
 
 def plotall(input):
     days = [];
@@ -15,15 +16,27 @@ def plotall(input):
     for word in input[0][1].keys():
         words.append(word) #append the words, we will draw one graph for each word
     #trying to show just one word
+    plt.figure(1)
     plt.xticks(range(len(days)),days,color="blue");
     for word in words:
         values = []
         for day in input:
             values.append(day[1][word]) #append the value of the word in each day
         plt.plot(range(len(days)),values, label=word)
-        plt.legend( loc="upper left")
-    
-
-
+        plt.legend( loc="lower left")
     plt.show
+    
+def plotRelations(relationsmatrix,cedwords):
+    mds = manifold.MDS(n_components=2,metric = False, dissimilarity="precomputed", random_state=6)
+    results = mds.fit(relationsmatrix)
+    coords = results.embedding_
+    plt.figure(2)
+    plt.subplots_adjust(bottom = 0.1)
+    plt.scatter(coords[:, 0], coords[:, 1], marker = 'o')
+    for label, x, y in zip(cedwords, coords[:, 0], coords[:, 1]):
+        plt.annotate(label,xy = (x, y), xytext = (-20, 20),textcoords = 'offset points', ha = 'right', va = 'bottom',
+        bbox = dict(boxstyle = 'round,pad=0.5', fc = 'yellow', alpha = 0.5),
+        arrowprops = dict(arrowstyle = '->', connectionstyle = 'arc3,rad=0'))
+
+
         

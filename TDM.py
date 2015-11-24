@@ -105,7 +105,7 @@ def saveallcsv(feed,feeddays):
         posts = getDayPosts(feed,day)
         #we have to clean the posts here because we need to compare them
         for post in posts:
-            newpost = textCleaner(post['description'])
+            newpost = textCleaner(post['title']+" "+post['description'])
             newpost.sort()  #the post have to be sorted
             postsclean.append(newpost)
         
@@ -197,20 +197,64 @@ def writeTitleList(l):
     writeListCsv(path, new)
     return 1
     
-def writeDaysList(l):
+def writeDaysList(l): #esto esta mal
     path = "csv/Days.csv"
     if not os.path.exists(path):
-        resultFile = open(path,"w",encoding='utf-8')
-    resultFile = open(path,"r",encoding='utf-8')
-    reader = csv.reader(resultFile)
-    old = []
-    new = []
-    for row in reader:
-        old.append(row)
-    for title in l:
-        if title not in old:
-            new.append(title)
-    new.sort()
-    writeListCsv(path, new)
+        writeListCsv(path,l)
+    else:
+        resultFile = open(path,"r",encoding='utf-8')
+        reader = csv.reader(resultFile)
+        for row in reader:
+            if not(row == []):
+                old = row
+        for day in l:
+            if day not in old:
+                old.append(day)
+        old.sort()
+        writeListCsv(path, old)
     return 1
     
+def makeRelationsMatrix(ced,allnews):
+    relationsmatrix = []
+    cedwords = list(ced.keys())
+    for i in range(0,len(ced)):
+        currentrow = []
+        for j in range (0,i+1): #We only need half of the matrix due to symmetry
+            if (i==j):
+                currentrow.append(1)
+            else:
+                currentrow.append(calculaterelation(i,j,cedwords,allnews))
+        relationsmatrix.append(currentrow)
+    #format relationsmatrix to be a nxn matrix
+    formatRelationsMatrix(relationsmatrix)
+    return relationsmatrix;
+    
+def calculaterelation(i,j,cedwords,allnews):
+    w1 = cedwords[i]
+    w2 = cedwords[j]
+    w1appearances = 0
+    w2appearances = 0
+    w1andw2 = 0
+    for day in allnews: #for each day
+        for wordlist in day: #for each new
+            if ((w1 in wordlist)and(w2 in wordlist)):
+                w1appearances += 1
+                w2appearances += 1
+                w1andw2 += 1
+            elif (w1 in wordlist):
+                w1appearances += 1
+            elif (w2 in wordlist):
+                w2appearances += 1
+    if ((w1andw2 > 0) or (w1appearances > 0) or (w2appearances > 0)):
+        return (1 -(w1andw2/(w1appearances + w2appearances - w1andw2))) #the distance is 1 - the similarity
+    else:
+        return 0
+
+def formatRelationsMatrix(relationsmatrix):
+    long = len(relationsmatrix) #the number of rows
+    for i in range(0,len(relationsmatrix)):
+        for j in range (len(relationsmatrix[i]),long): #esto igual peta
+            relationsmatrix[i].append(relationsmatrix[j][i])
+            
+    return relationsmatrix            
+            

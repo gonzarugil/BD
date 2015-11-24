@@ -21,8 +21,8 @@ def computeword(word,negativelist,positivelist,ced):
         return -1.0
     elif word in positivelist:
         return 1.0
-    elif word in ced.keys():
-        return float(ced[word])
+    #elif word in ced.keys():
+        #return float(ced[word]) The words in ced dont affect to the result to avoid snwoball effect
     else:
         return 0
 
@@ -48,7 +48,6 @@ def computeday(newslist,negativelist,positivelist,ced):
         
 def updateCEDword(word,ced,value):
     ced[word] = ced[word] + delta*value
-    print ("The word "+word+" has been updated, Now its value is: "+str(ced[word]))
 
 def attenuateCEDword(word,ced):
     ced[word] = ced[word] * epsilon #epsilon has to be >0
