@@ -10,10 +10,17 @@ delta = 0.2
 #Epsilon defines the rate of attenuation of a word if it doesnt appear
 epsilon = 0.8
 
+def setDelta(n):
+    global delta
+    delta = n
+    
+def setEpsilon(n):
+    global epsilon
+    epsilon = n
 
 def loadLexicon(filename):
     txt = open(filename)
-    print ("Loaded %r " % filename)
+    #print ("Loaded %r " % filename)
     return(set(txt.read().split()))
         
 def computeword(word,negativelist,positivelist,ced):

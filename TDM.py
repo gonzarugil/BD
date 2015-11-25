@@ -80,7 +80,7 @@ def getDayPosts(feed,dayformatted):
                 'url': currentpost.link,
                 })
             numposts += 1
-    print(str(numposts)+' posts have been processed')
+    #print(str(numposts)+' posts have been processed')
     return posts
  
 def makeTxD(posts):   
@@ -122,7 +122,7 @@ def saveallcsv(feed,feeddays):
             tdm = makeTxD(postsclean)
             
         writeCsv(tdm,day)
-        print ("SAVED DAY", day)
+        #print ("SAVED DAY", day)
         
 def loadcsv(name):
     reader=csv.reader(open(name),delimiter=',')
@@ -246,7 +246,7 @@ def calculaterelation(i,j,cedwords,allnews):
             elif (w2 in wordlist):
                 w2appearances += 1
     if ((w1andw2 > 0) or (w1appearances > 0) or (w2appearances > 0)):
-        return (1 -(w1andw2/(w1appearances + w2appearances - w1andw2))) #the distance is 1 - the similarity
+        return 1 - (w1andw2/(w1appearances + w2appearances - w1andw2))
     else:
         return 0
 
