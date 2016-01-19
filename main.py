@@ -4,18 +4,42 @@ Created on Sun Oct 18 20:02:45 2015
 
 @author: Gonzalo
 """
+
 import EM
 import TDM
 import Graph
 import collections
 
-
+   
+def setcedwords(newced):
+    global cedwords,CED,relevancelist,relationsmatrixes
+    cedwords = newced
+    CED = collections.OrderedDict()
+    for word in cedwords:
+        CED[word] = 0
+    relevancelist = TDM.MakeRelevanceList(cedwords,last30daysnews)
+    relationsmatrixes = TDM.makeCumulativeRelationsMatrixes(CED,last30daysnews)
     
+def makelast30days(dayslist):
+    if len(dayslist)<30:
+        return dayslist
+    else:
+        output=[]
+        start = len(dayslist)-30
+        for i in range(0,start):
+            output.append(dayslist[i])
+        return output
+            
+
+def parseinput(input):
+    input = input.lower()
+    output = [x.strip() for x in input.split(',')]
+    return output    
 #Loading lexicons
 positiveLex = EM.loadLexicon("resources/wh-positive-words.txt")
 negativeLex = EM.loadLexicon("resources/wh-negative-words.txt")
 #loading CED
-cedwords = ["isis","france","clinton","syria","obama","otan"]
+cedwords = ["isis","trump","syria","obama","uk"]
 CED = collections.OrderedDict()
 for word in cedwords:
     CED[word] = 0
@@ -36,26 +60,36 @@ TDM.saveallcsv(feed,dayslist)
 #------------------RETRIEVING DATA --------------------------------------
 #Getting the list of news from the csv to do the emotion analysis
 dayslist = TDM.getListCsv("csv/Days.csv")
-allnews = TDM.getDocsFromCsv(dayslist) #it gets the news by day
+last30days= makelast30days(dayslist)
+last30daysnews = TDM.getDocsFromCsv(last30days) #it gets the news by day
 titlelist = TDM.getListCsv("csv/Titles.csv") #titlelist is unused
+relevancelist = TDM.MakeRelevanceList(cedwords,last30daysnews)
+relationsmatrixes = TDM.makeCumulativeRelationsMatrixes(CED,last30daysnews)
 
 def EmotionAnalysis(delta,epsilon):
     EM.setDelta(delta)
     EM.setEpsilon(epsilon)
     #for each new compute the emotional value and show it 
     output = [] #output is a list of tuples with [day,CED of that day]
-    for i in range(0,len(dayslist)):
-        EM.computeday(allnews[i],negativeLex,positiveLex,CED)
-        output.append([dayslist[i],CED.copy()])
+    for i in range(0,len(last30days)):
+        EM.computeday(last30daysnews[i],negativeLex,positiveLex,CED)
+        output.append([last30days[i],CED.copy()])
     Graph.plotall(output)
     #after the execution we need to clean the values of the CED so they doesnt iterfere with next execution
     for word in cedwords:
         CED[word] = 0
     
 def Relations():        
-    relationsmatrix = TDM.makeRelationsMatrix(CED,allnews)
     #print(relationsmatrix) #this is for debug purposes
-    Graph.plotRelations(relationsmatrix,cedwords)
+    try:
+        Graph.plotRelations(relationsmatrixes,relevancelist,cedwords)
+    except ValueError:
+        print("The words you have introduced have no relation")
 
-
-
+#this is for printing only the graph corresponding to one day
+def RelationDay(i,figure):
+    if i in range(len(relationsmatrixes)):
+        Graph.plotRelationsDayfigure(figure,relationsmatrixes[i],relevancelist[i],cedwords)
+    else:
+        print("The i value you have provided is incorrect")
+    

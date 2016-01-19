@@ -15,6 +15,7 @@ from nltk.corpus import stopwords # Import the stop word list
 import operator
 import csv
 import os.path
+import collections
 
 def unformatTime(string):
     return time.strp(string,"%Y - %m - %d")
@@ -27,17 +28,13 @@ def textCleaner( input ):
     html_free_text = BeautifulSoup(input).get_text()
     # 2. Remove non-letters        
     letters_only = re.sub("[^a-zA-Z]", " ", html_free_text) 
-    #
     # 3. Convert to lower case, split into individual words
     words = letters_only.lower().split()                             
-    #
     # 4. In Python, searching a set is much faster than searching
     #   a list, so convert the stop words to a set
     stops = set(stopwords.words("english"))                  
-    # 
     # 5. Remove stop words
     meaningful_words = [w for w in words if not w in stops]   
-    #
     # 6. Join the words back into one string separated by space, 
     # and return the result.
     return( meaningful_words)
@@ -80,7 +77,6 @@ def getDayPosts(feed,dayformatted):
                 'url': currentpost.link,
                 })
             numposts += 1
-    #print(str(numposts)+' posts have been processed')
     return posts
  
 def makeTxD(posts):   
@@ -229,6 +225,15 @@ def makeRelationsMatrix(ced,allnews):
     formatRelationsMatrix(relationsmatrix)
     return relationsmatrix;
     
+def makeCumulativeRelationsMatrixes(ced,allnews):
+    buffer = []
+    output = []
+    for newday in allnews:
+        #We store in buffer the days progressively as we calculate the relations of it and store them in output
+        buffer.append(newday)
+        output.append(makeRelationsMatrix(ced,buffer))
+    return output
+    
 def calculaterelation(i,j,cedwords,allnews):
     w1 = cedwords[i]
     w2 = cedwords[j]
@@ -246,9 +251,9 @@ def calculaterelation(i,j,cedwords,allnews):
             elif (w2 in wordlist):
                 w2appearances += 1
     if ((w1andw2 > 0) or (w1appearances > 0) or (w2appearances > 0)):
-        return 1 - (w1andw2/(w1appearances + w2appearances - w1andw2))
+        return 1-(w1andw2/(w1appearances + w2appearances - w1andw2))
     else:
-        return 0
+        return 1
 
 def formatRelationsMatrix(relationsmatrix):
     long = len(relationsmatrix) #the number of rows
@@ -256,5 +261,24 @@ def formatRelationsMatrix(relationsmatrix):
         for j in range (len(relationsmatrix[i]),long): #esto igual peta
             relationsmatrix[i].append(relationsmatrix[j][i])
             
-    return relationsmatrix            
+    return relationsmatrix  
+          
+def calculaterelevance(cedwords,newsdays):
+    relevance = collections.OrderedDict()
+    for word in cedwords:
+        relevance[word] = 0
+    for newday in newsdays:
+        for new in newday:
+            for word in cedwords:
+                relevance[word]+=new.count(word)
+    return relevance
+    
+def MakeRelevanceList(cedwords,allnews):
+     output = []
+     buffer = []
+     for newday in allnews:
+         #we calculate the cumulative relevance for each day
+         buffer.append(newday)
+         output.append(calculaterelevance(cedwords,buffer))
+     return output
             
