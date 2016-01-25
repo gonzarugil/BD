@@ -103,7 +103,7 @@ def plotRelationsDayfigure(figure,relations,relevance,cedwords):
         else:
             flag = 1
         relevanceaux = relevance.copy()
-        mds = manifold.MDS(n_components=2,metric = True, dissimilarity="precomputed", random_state=6)
+        mds = manifold.MDS(n_components=2,metric = False, dissimilarity="precomputed", random_state=6)
         results = mds.fit(relations)
         coords = results.embedding_
         plt.subplots_adjust(bottom = 0.1)
