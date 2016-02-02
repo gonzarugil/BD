@@ -6,10 +6,10 @@ Created on Tue Nov  3 14:08:51 2015
 """
 
 import matplotlib.pyplot as plt
-import collections
 from sklearn import manifold
 
-flag = 0
+flagr = 0
+flage = 0
 
 def plotall(input):
     days = [];
@@ -24,6 +24,32 @@ def plotall(input):
         showabledays.append(day[12:])
     emgraph = plt.figure("Grafica de Emociones")
     emgraph.clear()
+    plt.xticks(range(len(days)),showabledays,color="blue");
+    for word in words:
+        values = []
+        for day in input:
+            values.append(day[1][word]) #append the value of the word in each day
+        plt.plot(range(len(days)),values, label=word)
+        plt.legend( loc="lower left")
+    plt.draw()
+    
+def plotallfigure(figure,input):
+    global flage
+    plt.figure(figure.number)
+    if flage == 1:
+        plt.clf()
+    else:
+        flage = 1
+    days = [];
+    for day in input:
+        days.append(day[0]) #append the string day, this will be the x axis
+    words = [];
+    for word in input[0][1].keys():
+        words.append(word) #append the words, we will draw one graph for each word
+    
+    showabledays = []
+    for day in days:
+        showabledays.append(day[12:])
     plt.xticks(range(len(days)),showabledays,color="blue");
     for word in words:
         values = []
@@ -52,7 +78,7 @@ def plotRelations(relationsmatrixes,relevancelist,cedwords):
         if (relations==[[1, 0, 0, 0, 0.0], [0, 1, 0, 0, 0.0], [0, 0, 1, 0, 0.0], [0, 0, 0, 1, 0.0], [0.0, 0.0, 0.0, 0.0, 1]]):
             print("THERE IS NO RELATION AT AL HUEHUEHUEHUEHEU")
         else:
-            mds = manifold.MDS(n_components=2,metric = False, dissimilarity="precomputed", random_state=6)
+            mds = manifold.MDS(n_components=2,metric = True, dissimilarity="precomputed", random_state=6)
             results = mds.fit(relations)
             coords = results.embedding_
             plt.figure(i)
@@ -71,13 +97,13 @@ def plotRelations(relationsmatrixes,relevancelist,cedwords):
         
     
 def plotRelationsDay(relations,relevance,cedwords):
-        global flag        
-        if flag == 1:
+        global flagr        
+        if flagr == 1:
             plt.close(plt.figure("Relations"))
         else:
-            flag = 1
+            flagr = 1
         relevanceaux = relevance.copy()
-        mds = manifold.MDS(n_components=2,metric = False, dissimilarity="precomputed", random_state=6)
+        mds = manifold.MDS(n_components=2,metric = True, dissimilarity="precomputed", random_state=6)
         results = mds.fit(relations)
         coords = results.embedding_
         relfig = plt.figure("Relations")
@@ -97,13 +123,13 @@ def plotRelationsDay(relations,relevance,cedwords):
         
 def plotRelationsDayfigure(figure,relations,relevance,cedwords):
         plt.figure(figure.number)
-        global flag        
-        if flag == 1:
+        global flagr        
+        if flagr == 1:
             plt.clf()
         else:
-            flag = 1
+            flagr = 1
         relevanceaux = relevance.copy()
-        mds = manifold.MDS(n_components=2,metric = False, dissimilarity="precomputed", random_state=6)
+        mds = manifold.MDS(n_components=2,metric = True, dissimilarity="precomputed", random_state=6)
         results = mds.fit(relations)
         coords = results.embedding_
         plt.subplots_adjust(bottom = 0.1)

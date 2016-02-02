@@ -260,7 +260,9 @@ def formatRelationsMatrix(relationsmatrix):
     for i in range(0,len(relationsmatrix)):
         for j in range (len(relationsmatrix[i]),long): #esto igual peta
             relationsmatrix[i].append(relationsmatrix[j][i])
-            
+    #each term distance(dissimilarity) with itself has to be 0!!        
+    for k in range(0,len(relationsmatrix)):
+        relationsmatrix[k][k] = 0
     return relationsmatrix  
           
 def calculaterelevance(cedwords,newsdays):

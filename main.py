@@ -66,7 +66,7 @@ titlelist = TDM.getListCsv("csv/Titles.csv") #titlelist is unused
 relevancelist = TDM.MakeRelevanceList(cedwords,last30daysnews)
 relationsmatrixes = TDM.makeCumulativeRelationsMatrixes(CED,last30daysnews)
 
-def EmotionAnalysis(delta,epsilon):
+def EmotionAnalysis(delta,epsilon,figure):
     EM.setDelta(delta)
     EM.setEpsilon(epsilon)
     #for each new compute the emotional value and show it 
@@ -74,7 +74,7 @@ def EmotionAnalysis(delta,epsilon):
     for i in range(0,len(last30days)):
         EM.computeday(last30daysnews[i],negativeLex,positiveLex,CED)
         output.append([last30days[i],CED.copy()])
-    Graph.plotall(output)
+    Graph.plotallfigure(figure,output)
     #after the execution we need to clean the values of the CED so they doesnt iterfere with next execution
     for word in cedwords:
         CED[word] = 0
@@ -93,3 +93,8 @@ def RelationDay(i,figure):
     else:
         print("The i value you have provided is incorrect")
     
+def RelationDayCommand(i):
+    if i in range(len(relationsmatrixes)):
+        Graph.plotRelationsDay(relationsmatrixes[i],relevancelist[i],cedwords)
+    else:
+        print("The i value you have provided is incorrect"
