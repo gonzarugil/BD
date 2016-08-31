@@ -21,12 +21,12 @@ def setcedwords(newced):
     relationsmatrixes = TDM.makeCumulativeRelationsMatrixes(CED,last30daysnews)
     
 def makelast30days(dayslist):
-    if len(dayslist)<30:
+    if len(dayslist) < 30:
         return dayslist
     else:
         output=[]
         start = len(dayslist)-30
-        for i in range(0,start):
+        for i in range(start , len(dayslist)):
             output.append(dayslist[i])
         return output
             
@@ -86,7 +86,7 @@ def Relations():
     except ValueError:
         print("The words you have introduced have no relation")
 
-#this is for printing only the graph corresponding to one day
+# this is for printing only the graph corresponding to one day
 def RelationDay(i,figure):
     if i in range(len(relationsmatrixes)):
         Graph.plotRelationsDayfigure(figure,relationsmatrixes[i],relevancelist[i],cedwords)
@@ -97,4 +97,4 @@ def RelationDayCommand(i):
     if i in range(len(relationsmatrixes)):
         Graph.plotRelationsDay(relationsmatrixes[i],relevancelist[i],cedwords)
     else:
-        print("The i value you have provided is incorrect"
+        print("The i value you have provided is incorrect")

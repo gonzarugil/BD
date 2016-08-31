@@ -25,7 +25,7 @@ def formatTime(datein):
 
 def textCleaner( input ):
      # 1. Remove HTML
-    html_free_text = BeautifulSoup(input).get_text()
+    html_free_text = BeautifulSoup(input,"html.parser").get_text()
     # 2. Remove non-letters        
     letters_only = re.sub("[^a-zA-Z]", " ", html_free_text) 
     # 3. Convert to lower case, split into individual words
