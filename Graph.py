@@ -12,10 +12,10 @@ flagr = 0
 flage = 0
 
 def plotall(input):
-    days = [];
+    days = []
     for day in input:
         days.append(day[0]) #append the string day, this will be the x axis
-    words = [];
+    words = []
     for word in input[0][1].keys():
         words.append(word) #append the words, we will draw one graph for each word
     
