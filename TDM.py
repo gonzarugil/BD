@@ -75,7 +75,7 @@ def getOneDocsCsv(path):
     return currentdocument
 
 
-def getDocsFromCsv(dayslist): #esto añade un vacio al principio, revisar
+def getDocsFromCsv(dayslist):
     doclist = []
     for day in dayslist:
         daylist = []

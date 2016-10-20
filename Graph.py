@@ -33,7 +33,7 @@ def plotall(input):
         plt.legend( loc="lower left")
     plt.draw()
     
-def plotallfigure(figure,input):
+def plotallfigure(figure,input,dayinterval): # que recibe?
     global flage
     plt.figure(figure.number)
     if flage == 1:
@@ -41,11 +41,11 @@ def plotallfigure(figure,input):
     else:
         flage = 1
     days = [];
-    for day in input:
-        days.append(day[0]) #append the string day, this will be the x axis
+    for day in dayinterval:
+        days.append(day) #append the string day, this will be the x axis
     words = [];
     for word in input[0][1].keys():
-        words.append(word) #append the words, we will draw one graph for each word
+        words.append(word) #append the words (from the first element), we will draw one graph for each word
     
     showabledays = []
     for day in days:

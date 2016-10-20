@@ -19,8 +19,18 @@ def setcedwords(newced):
     CED = collections.OrderedDict()
     for word in cedwords:
         CED[word] = 0
-    relevancelist = Relations.MakeRelevanceList(cedwords, last30daysnews)
-    relationsmatrixes = Relations.makeCumulativeRelationsMatrixes(CED, last30daysnews)
+    relevancelist = Relations.MakeRelevanceList(cedwords, news)
+    relationsmatrixes = Relations.makeCumulativeRelationsMatrixes(CED, news)
+
+
+def makedayinterval(daystart, dayend):
+    global dayslist
+    output = []
+    if daystart < dayend:
+        for day in dayslist:
+            if daystart <= day <= dayend:
+                output.append(day)
+    return output
 
 
 def makelast30days(dayslist):
@@ -33,8 +43,16 @@ def makelast30days(dayslist):
             output = output.append(dayslist[i])
         return output
 
+
 def parseinput(input):
     return Utils.Text.parseinput(input)
+
+
+def setdayinterval(input):
+    global dayinterval,news,cedwords
+    dayinterval = input
+    news = TDM.getDocsFromCsv(dayinterval)
+    setcedwords(cedwords)
 
 # Loading lexicons
 positiveLex = Utils.Data.loadLexicon(Config.POS_LEX)
@@ -43,24 +61,29 @@ negativeLex = Utils.Data.loadLexicon(Config.NEG_LEX)
 # ------------------RETRIEVING DATA --------------------------------------
 # Getting the list of news from the csv to do the emotion analysis
 dayslist = Utils.Data.getListFromCsv("csv/Days.csv")
-last30days = makelast30days(dayslist)
-last30daysnews = TDM.getDocsFromCsv(last30days)  # it gets the news by day
-titlelist = Utils.Data.getListFromCsv("csv/Titles.csv")  # titlelist is unused
-setcedwords(['pope','photo'])
+dayinterval = makelast30days(dayslist)
+# last30days = makelast30days(dayslist)
+# last30daysnews = TDM.getDocsFromCsv(last30days)  # it gets the news by day
+news = TDM.getDocsFromCsv(dayinterval)
+setcedwords(['default','test'])
 
 
 def EmotionAnalysis(epsilon, figure):
+    global news,CED
     EM.setEpsilon(epsilon)
     # for each new compute the emotional value and show it
     output = []  # output is a list of tuples with [day,CED of that day]
-    for i in range(0, len(last30days)):
-        EM.computeday(last30daysnews[i], negativeLex, positiveLex, CED)
-        output.append([last30days[i], CED.copy()])
-    Graph.plotallfigure(figure, output)
+    for i in range(0, len(dayinterval)):
+        EM.computeday(news[i], negativeLex, positiveLex, CED)
+        output.append([news[i], CED.copy()])
+    Graph.plotallfigure(figure, output,dayinterval)
     # after the execution we need to clean the values of the CED so they doesnt iterfere with next execution
     for word in cedwords:
         CED[word] = 0
 
+#i = makedayinterval('2016 - 09 - 10','2016 - 09 - 13')
+#setdayinterval(i)
+#EmotionAnalysis(0.5,None)
 
 def RelationsGraph():
     # print(relationsmatrix) #this is for debug purposes
