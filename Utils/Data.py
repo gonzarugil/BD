@@ -7,7 +7,7 @@ def writeCsv(tdm, dayformatted):
 
 
 def loadcsv(name):
-    reader = csv.reader(open(name), delimiter=',')
+    reader = csv.reader(open(name, 'r', encoding='utf-8'), delimiter=',')
     x = list(reader)
     return x
 
