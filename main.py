@@ -40,7 +40,7 @@ def makelast30days(dayslist):
         output = []
         start = len(dayslist) - 30
         for i in range(start, len(dayslist)):
-            output = output.append(dayslist[i])
+            output.append(dayslist[i])
         return output
 
 
