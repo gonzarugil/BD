@@ -1,6 +1,7 @@
 import collections
 
 import sklearn
+from sklearn import manifold
 
 
 def makeRelationsMatrix(ced, allnews):
@@ -46,7 +47,7 @@ def calculaterelation(i, j, cedwords, allnews):
             elif w2 in wordlist:
                 w2appearances += 1
     if (w1andw2 > 0) or (w1appearances > 0) or (w2appearances > 0):
-        return 1 - (w1andw2 / (w1appearances + w2appearances - w1andw2)) # Distance matrix varying between 0 and 1
+        return 1 - (w1andw2 / (w1appearances + w2appearances - w1andw2))  # Distance matrix varying between 0 and 1
     else:
         return 1
 
@@ -54,7 +55,7 @@ def calculaterelation(i, j, cedwords, allnews):
 def formatRelationsMatrix(relationsmatrix):
     long = len(relationsmatrix)  # the number of rows
     for i in range(0, len(relationsmatrix)):
-        for j in range(len(relationsmatrix[i]), long):  # esto igual peta
+        for j in range(len(relationsmatrix[i]), long):
             relationsmatrix[i].append(relationsmatrix[j][i])
     # each term distance(dissimilarity) with itself has to be 0!!
     for k in range(0, len(relationsmatrix)):
@@ -81,4 +82,14 @@ def MakeRelevanceList(cedwords, allnews):
         # we calculate the cumulative relevance for each day
         buffer.append(newday)
         output.append(calculaterelevance(cedwords, buffer))
+    return output
+
+
+def compute_mds_coords(relationsmatrixes):
+    output = []
+    for matrix in relationsmatrixes:
+        mds = manifold.MDS(n_components=2, metric=True, dissimilarity="precomputed", random_state=6)
+        results = mds.fit(matrix)
+        coords = results.embedding_
+        output.append(coords)
     return output

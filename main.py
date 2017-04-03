@@ -14,13 +14,14 @@ import Config
 
 
 def setcedwords(newced):
-    global cedwords, CED, relevancelist, relationsmatrixes
+    global cedwords, CED, relevancelist, relationsmatrixes, mds_coords
     cedwords = newced
     CED = collections.OrderedDict()
     for word in cedwords:
         CED[word] = 0
     relevancelist = Relations.MakeRelevanceList(cedwords, news)
     relationsmatrixes = Relations.makeCumulativeRelationsMatrixes(CED, news)
+    mds_coords = Relations.compute_mds_coords(relationsmatrixes)
 
 
 def makedayinterval(daystart, dayend):
@@ -49,10 +50,11 @@ def parseinput(input):
 
 
 def setdayinterval(input):
-    global dayinterval,news,cedwords
+    global dayinterval, news, cedwords
     dayinterval = input
     news = TDM.getDocsFromCsv(dayinterval)
     setcedwords(cedwords)
+
 
 # Loading lexicons
 positiveLex = Utils.Data.loadLexicon(Config.POS_LEX)
@@ -65,25 +67,27 @@ dayinterval = makelast30days(dayslist)
 # last30days = makelast30days(dayslist)
 # last30daysnews = TDM.getDocsFromCsv(last30days)  # it gets the news by day
 news = TDM.getDocsFromCsv(dayinterval)
-setcedwords(['default','test'])
+setcedwords(['default', 'test'])
 
 
 def EmotionAnalysis(epsilon, figure):
-    global news,CED
-    EM.setEpsilon(epsilon)
+    global news, CED
+    EM.setepsilon(epsilon)
     # for each new compute the emotional value and show it
     output = []  # output is a list of tuples with [day,CED of that day]
     for i in range(0, len(dayinterval)):
         EM.computeday(news[i], negativeLex, positiveLex, CED)
         output.append([news[i], CED.copy()])
-    Graph.plotallfigure(figure, output,dayinterval)
+    Graph.plotEMfigure(figure, output, dayinterval)
     # after the execution we need to clean the values of the CED so they doesnt iterfere with next execution
     for word in cedwords:
         CED[word] = 0
 
-#i = makedayinterval('2016 - 09 - 10','2016 - 09 - 13')
-#setdayinterval(i)
-#EmotionAnalysis(0.5,None)
+
+#DEBUG
+
+
+# ----
 
 def RelationsGraph():
     # print(relationsmatrix) #this is for debug purposes
@@ -95,14 +99,17 @@ def RelationsGraph():
 
 # this is for printing only the graph corresponding to one day
 def RelationDay(i, figure):
-    if i in range(len(relationsmatrixes)):
-        Graph.plotRelationsDayfigure(figure, relationsmatrixes[i], relevancelist[i], cedwords)
+    if i in range(len(mds_coords)):
+        Graph.plotRelationsDayfigure(figure, mds_coords[i], relevancelist[i], cedwords)
     else:
         print("The i value you have provided is incorrect")
 
 
 def RelationDayCommand(i):
-    if i in range(len(relationsmatrixes)):
-        Graph.plotRelationsDay(relationsmatrixes[i], relevancelist[i], cedwords)
+    if i in range(len(mds_coords)):
+        Graph.plotRelationsDay(mds_coords[i], relevancelist[i], cedwords)
     else:
         print("The i value you have provided is incorrect")
+
+def RelationSummary(figure):
+    Graph.plotRelationsEvolutionFigure(figure,mds_coords,cedwords)

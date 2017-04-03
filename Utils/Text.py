@@ -3,14 +3,14 @@ import re
 from bs4 import BeautifulSoup
 from nltk.corpus import stopwords  # Import the stop word list
 from stemming.porter2 import stem
+
 import Config
-from Utils import textmining
 
 
 def textCleaner(input):
     # 1. Remove HTML
     # To avoid joining of words when html is cleaned we add spaces
-    input = input.replace("<"," <")
+    input = input.replace("<", " <")
     input = input.replace(">", "> ")
     html_free_text = BeautifulSoup(input, "html.parser").get_text()
     # 2. Remove non-letters

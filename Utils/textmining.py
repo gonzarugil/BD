@@ -171,7 +171,7 @@ def editdistance(a, b):
             add, delete = previous[j] + 1, current[j - 1] + 1
             change = previous[j - 1]
             if a[j - 1] != b[i - 1]:
-                change = change + 1
+                change += 1
             current[j] = min(add, delete, change)
     return current[n]
 
@@ -318,7 +318,7 @@ class TermDocumentMatrix(object):
     def rows(self, cutoff=2):
         """Helper function that returns rows of term-document matrix."""
         # Get master list of words that meet or exceed the cutoff frequency
-        words = [word for word in self.doc_count \
+        words = [word for word in self.doc_count
                  if self.doc_count[word] >= cutoff]
         # Return header
         yield words

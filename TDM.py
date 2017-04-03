@@ -85,7 +85,6 @@ def getDocsFromCsv(dayslist):
         docwords = []
         lenght = len(words)
         for i in range(1, len(matrix)):  # for each row, we start in the row 2 (values)
-            row = matrix[i]
             for j in range(0, lenght):  # for each word (column)
                 element = int(matrix[i][j])
                 for e in range(0, element):  # for the value of each element
@@ -110,10 +109,10 @@ def writeTitleList(l):
     return 1
 
 
-def writeDaysList(l):  # esto esta mal
+def writeDaysList(l):
     path = "csv/Days.csv"
     if not os.path.exists(path):
-        l.sort() # Thia is not really necessary but for assuring the days are sorted
+        l.sort()  # Thia is not really necessary but for assuring the days are sorted
         Utils.Data.writeListToCsv(path, l)
     else:
         days = Utils.Data.getListFromCsv(path)
@@ -123,5 +122,3 @@ def writeDaysList(l):  # esto esta mal
         days.sort()
         Utils.Data.writeListToCsv(path, days)
     return 1
-
-

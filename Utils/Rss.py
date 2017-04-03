@@ -21,7 +21,7 @@ def getrssdays(feed):
     return days
 
 
-# TODO: check if it can be done in other way
+
 def getdayposts(feed, dayformatted):
     posts = []
     numposts = 0
