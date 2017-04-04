@@ -39,12 +39,14 @@ def computeday(newslist, negativelist, positivelist, ced):
     for new in newslist:
         computewordlist(new, negativelist, positivelist, ced)
     for cedword in ced.keys():
-        flag = 0
+        appearances = 0
         for new in newslist:
             if cedword in new:
-                flag = 1
-        if flag == 0:
+                appearances += 1
+        if appearances == 0:
             attenuatecedword(cedword, ced)
+        else:
+            ced[cedword] = ced[cedword]/appearances
 
 
 def updatecedword(word, ced, value):

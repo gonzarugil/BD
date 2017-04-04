@@ -92,4 +92,17 @@ def compute_mds_coords(relationsmatrixes):
         results = mds.fit(matrix)
         coords = results.embedding_
         output.append(coords)
+    # we have to fix the signs to avoid mirroring
+    for i in range(1,len(output)):
+        cx1 = [x[0] for x in output[i-1]]
+        cx2 = [x[0] for x in output[i]]
+        cy1 = [x[1] for x in output[i - 1]]
+        cy2 = [x[1] for x in output[i]]
+
+        if sum(t*c for t,c in zip(cx1,cx2)) < 0:
+            for j in range(len(output[i][0])):
+                output[i][0][j] *= -1
+        if sum(t*c for t,c in zip(cy1,cy2)) < 0:
+            for j in range(len(output[i][1])):
+                output[i][1][j] *= -1
     return output

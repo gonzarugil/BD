@@ -65,6 +65,7 @@ def plotEMfigure(figure, input, dayinterval):
             values.append(day[1][word])  # append the value of the word in each day
         plt.plot(range(len(days)), values, label=word)
         plt.legend(loc="lower left")
+    plt.axhline(0, linestyle='--',color='black',lw=0.5)
     plt.draw()
 
 
@@ -156,13 +157,11 @@ def plotRelationsDayfigure(figure, coords, relevance, cedwords):
                      ha='right', va='bottom',
                      bbox=dict(boxstyle='round,pad=0.5', fc='yellow', alpha=0.5),
                      arrowprops=dict(arrowstyle='->', connectionstyle='arc3,rad=0'))
-    fig_size = plt.rcParams["figure.figsize"]
-    # Prints: [8.0, 6.0]
-    print("Current size:", fig_size)
+    plt.autoscale(enable=False)
+    plt.axis([-1,1,-1,1])
     plt.draw()
 
 def plotRelationsEvolution(mds_coords,cedwords):
-    print("ehe")
     coord_dict = collections.OrderedDict()
     for word in cedwords:
         coord_dict[word] = []
@@ -198,8 +197,5 @@ def plotRelationsEvolutionFigure(figure,mds_coords,cedwords):
                 label=cedwords[j])
         plt.quiver(x[:-1], y[:-1], x[1:] - x[:-1], y[1:] - y[:-1], scale_units='xy', angles='xy', scale=1,color=line[0].get_color())
 
-    fig_size = plt.rcParams["figure.figsize"]
-    # Prints: [8.0, 6.0]
-    print("Current size:", fig_size)
     plt.legend()
     plt.draw()
