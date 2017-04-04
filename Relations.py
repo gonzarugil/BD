@@ -100,9 +100,9 @@ def compute_mds_coords(relationsmatrixes):
         cy2 = [x[1] for x in output[i]]
 
         if sum(t*c for t,c in zip(cx1,cx2)) < 0:
-            for j in range(len(output[i][0])):
-                output[i][0][j] *= -1
+            for j in range(len(output[i])):
+                output[i][j][0] *= -1
         if sum(t*c for t,c in zip(cy1,cy2)) < 0:
-            for j in range(len(output[i][1])):
-                output[i][1][j] *= -1
+            for j in range(len(output[i])):
+                output[i][j][1] *= -1
     return output
