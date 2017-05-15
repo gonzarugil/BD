@@ -93,6 +93,7 @@ def compute_mds_coords(relationsmatrixes):
         coords = results.embedding_
         output.append(coords)
     # we have to fix the signs to avoid mirroring
+
     for i in range(1,len(output)):
         cx1 = [x[0] for x in output[i-1]]
         cx2 = [x[0] for x in output[i]]

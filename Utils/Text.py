@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 from nltk.corpus import stopwords  # Import the stop word list
 from stemming.porter2 import stem
 
-import Config
+import config_vars
 
 
 def textCleaner(input):
@@ -21,7 +21,7 @@ def textCleaner(input):
     #   a list, so convert the stop words to a set
     stops = set(stopwords.words("english"))
     # 5. Remove stop words
-    if Config.STEMMING:
+    if config_vars.STEMMING:
         meaningful_words = [stem(w) for w in words if not w in stops]
     else:
         meaningful_words = [w for w in words if not w in stops]
@@ -32,7 +32,7 @@ def textCleaner(input):
 
 def parseinput(input):
     input = input.lower()
-    if Config.STEMMING:
+    if config_vars.STEMMING:
         input = [stem(w) for w in ",".split(input)].join(" ")
     output = [x.strip() for x in input.split(',')]
     return output

@@ -4,13 +4,13 @@ Created on Sun Oct 18 20:02:45 2015
 @author: Gonzalo
 """
 
-import EM
-import TDM
-import Graph
+import emotion_polarity_analysis
+import term_document_matrix
+import graph_figures
 import collections
 import Utils
-import Relations
-import Config
+import relation_analysis
+import config_vars
 
 
 def setcedwords(newced):
@@ -19,9 +19,9 @@ def setcedwords(newced):
     CED = collections.OrderedDict()
     for word in cedwords:
         CED[word] = 0
-    relevancelist = Relations.MakeRelevanceList(cedwords, news)
-    relationsmatrixes = Relations.makeCumulativeRelationsMatrixes(CED, news)
-    mds_coords = Relations.compute_mds_coords(relationsmatrixes)
+    relevancelist = relation_analysis.MakeRelevanceList(cedwords, news)
+    relationsmatrixes = relation_analysis.makeCumulativeRelationsMatrixes(CED, news)
+    mds_coords = relation_analysis.compute_mds_coords(relationsmatrixes)
 
 
 def makedayinterval(daystart, dayend):
@@ -52,13 +52,13 @@ def parseinput(input):
 def setdayinterval(input):
     global dayinterval, news, cedwords
     dayinterval = input
-    news = TDM.getDocsFromCsv(dayinterval)
+    news = term_document_matrix.getDocsFromCsv(dayinterval)
     setcedwords(cedwords)
 
 
 # Loading lexicons
-positiveLex = Utils.Data.loadLexicon(Config.POS_LEX)
-negativeLex = Utils.Data.loadLexicon(Config.NEG_LEX)
+positiveLex = Utils.Data.loadLexicon(config_vars.POS_LEX)
+negativeLex = Utils.Data.loadLexicon(config_vars.NEG_LEX)
 
 # ------------------RETRIEVING DATA --------------------------------------
 # Getting the list of news from the csv to do the emotion analysis
@@ -66,19 +66,19 @@ dayslist = Utils.Data.getListFromCsv("csv/Days.csv")
 dayinterval = makelast30days(dayslist)
 # last30days = makelast30days(dayslist)
 # last30daysnews = TDM.getDocsFromCsv(last30days)  # it gets the news by day
-news = TDM.getDocsFromCsv(dayinterval)
+news = term_document_matrix.getDocsFromCsv(dayinterval)
 setcedwords(['default', 'test'])
 
 
 def EmotionAnalysis(epsilon, figure):
     global news, CED
-    EM.setepsilon(epsilon)
+    emotion_polarity_analysis.setepsilon(epsilon)
     # for each new compute the emotional value and show it
     output = []  # output is a list of tuples with [day,CED of that day]
     for i in range(0, len(dayinterval)):
-        EM.computeday(news[i], negativeLex, positiveLex, CED)
+        emotion_polarity_analysis.computeday(news[i], negativeLex, positiveLex, CED,len(dayinterval))
         output.append([news[i], CED.copy()])
-    Graph.plotEMfigure(figure, output, dayinterval)
+    graph_figures.plotEMfigure(figure, output, dayinterval)
     # after the execution we need to clean the values of the CED so they doesnt iterfere with next execution
     for word in cedwords:
         CED[word] = 0
@@ -92,7 +92,7 @@ def EmotionAnalysis(epsilon, figure):
 def RelationsGraph():
     # print(relationsmatrix) #this is for debug purposes
     try:
-        Graph.plotRelations(relationsmatrixes, relevancelist, cedwords)
+        graph_figures.plotRelations(relationsmatrixes, relevancelist, cedwords)
     except ValueError:
         print("The words you have introduced have no relation")
 
@@ -100,16 +100,16 @@ def RelationsGraph():
 # this is for printing only the graph corresponding to one day
 def RelationDay(i, figure):
     if i in range(len(mds_coords)):
-        Graph.plotRelationsDayfigure(figure, mds_coords[i], relevancelist[i], cedwords)
+        graph_figures.plotRelationsDayfigure(figure, mds_coords[i], relevancelist[i], cedwords)
     else:
         print("The i value you have provided is incorrect")
 
 
 def RelationDayCommand(i):
     if i in range(len(mds_coords)):
-        Graph.plotRelationsDay(mds_coords[i], relevancelist[i], cedwords)
+        graph_figures.plotRelationsDay(mds_coords[i], relevancelist[i], cedwords)
     else:
         print("The i value you have provided is incorrect")
 
 def RelationSummary(figure):
-    Graph.plotRelationsEvolutionFigure(figure,mds_coords,cedwords)
+    graph_figures.plotRelationsEvolutionFigure(figure, mds_coords, cedwords)
