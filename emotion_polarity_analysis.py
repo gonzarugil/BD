@@ -14,10 +14,12 @@ def setepsilon(n):
     epsilon = n
 
 
-def computeword(word, negativelist, positivelist):
+def computeword(word, negativelist, positivelist, count):
     if word in negativelist:
+        count += 1
         return -1.0
     elif word in positivelist:
+        count += 1
         return 1.0
         # elif word in ced.keys():
         # return float(ced[word]) The words in ced dont affect to the result to avoid snwoball effect
@@ -27,8 +29,11 @@ def computeword(word, negativelist, positivelist):
 
 def computewordlist(wordlist, negativelist, positivelist, ced):
     result = 0
+    count = 0
     for word in wordlist:
-        result += computeword(word, negativelist, positivelist)
+        result += computeword(word, negativelist, positivelist,count)
+    if count != 0:
+        result /= count
     for cedword in ced.keys():
         if cedword in wordlist:
             updatecedword(cedword, ced, result)  # it doesnt count multiple occurrences of the word
